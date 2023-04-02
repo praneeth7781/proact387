@@ -51,6 +51,14 @@ app.get("/login", (req, res) => {
       });
     }
   });
+  app.get("/logout", (req, res) => {
+    res.clearCookie("id", { path: "/" });
+    req.session.destroy(() => {
+      res.send("Logged Out!");
+    });
+    // res.clearCookie("id", {path: '/'});
+    // res.redirect('/login');
+  });
 app.post("/studentlogin", async (req,res)=>{
     console.log("Entered server side student login");
     const user_id = req.body.user_id;
