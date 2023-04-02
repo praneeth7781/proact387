@@ -1,22 +1,22 @@
 import React, {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 
-function LandingPage(){
+function SignUpSuccess(){
     const navigate = useNavigate();
     const navlogin=()=>{
-        navigate('/login');
+        navigate('/');
     };
     return(
         <div className="landingpage">
             <h1>
-                Welcome to Proactive Mental Health Monitoring Website
+                Signup successful
             </h1>
             <h1>
-                
+                Please login to continue
             </h1>
-            <button></button>
+            <button onClick={navlogin}>Login</button>
         </div>
     )
 }
 
-export default LandingPage;
+export default SignUpSuccess;
