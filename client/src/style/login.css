@@ -1,73 +1,3 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-body{
-    font-family: 'Poppins', sans-serif;
-    background-color: #00ac96;
-}
-.content{
-    margin: 8%;
-    background-color: #fff;
-    padding: 4rem 1rem 4rem 1rem;
-    box-shadow: 0 0 5px 5px rgba(0,0,0, .05);
-}
-.signin-text{
-    margin-left: 50%;
-    font-style: normal;
-    font-weight: 600 !important;
-
-}
-
-.title-text{
-    margin-top: 10px;
-    font-style: normal;
-    font-weight: 900;
-}
-
-.form-text{
-    margin-left: 50%;
-}
-
-.form-control{
-    display: block;
-    width:50%;
-    margin-left: 50%;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height:1.5;
-    border-color: #00ac96 !important;
-    border-style: solid !important;
-    border-width: 0 0 1px 0 !important;
-    padding: 0px !important;
-    color:#495057;
-    height: auto;
-    border-radius: 0;
-    background-color: #fff;
-    background-clip: padding-box;
-}
-
-
-.form-control:focus{
-
-    color: #495057;
-    background-color: #fff;
-    border-color: #fff;
-    outline: 0;
-    box-shadow: none;
-}
-.birthday-section{
-    padding: 15px;
-}
-.btn-class{
-    margin-top: 30px;
-    margin-left: 50%;
-    border-color: #00ac96;
-    color: #00ac96;
-}
-.btn-class:hover{
-    background-color:  #00ac96;
-    color: #fff;
-} */
-
-
 *, *::after, *::before {
     margin: 0;
     padding: 0;
@@ -194,13 +124,15 @@ body{
 }
 .button {
     width: 180px;
+    cursor: pointer;
     height: 50px;
     border-radius: 25px;
-    margin-top: 50px;
+    margin-top: 25px;
     font-weight: 700;
     font-size: 14px;
     letter-spacing: 1.15px;
-    background-color: #4b70e2;
+    background-color: rgb(25, 185, 217);
+    /* background-color: #4b70e2; */
     color: #f9f9f9;
     box-shadow: 8px 8px 16px #d1d9e6, -8px -8px 16px #f9f9f9;
     border: none;
@@ -302,4 +234,59 @@ body{
     30%, 50% {
         width: 500px;
    }
+}
+
+.st_inst_toggle {
+    border-color: #181818;
+    box-shadow: #d1d9e6;
+    border-radius: 25px;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.button2{
+    width: 100px;
+    height: 50px;
+    cursor:pointer;
+    border-radius: 25px;
+    margin-bottom: 20px;
+    margin-right: 2px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1.15px;
+    background-color: rgb(25, 185, 217);
+    color: #f9f9f9;
+    box-shadow: 8px 8px 16px #d1d9e6, -8px -8px 16px #f9f9f9;
+    border: none;
+    outline: none;
+    transition:0.5s;
+    transition-timing-function: ease-in;
+    transition-delay: 0.1s;
+}
+
+.dis{
+    width: 100px;
+    cursor:pointer;
+    height: 50px;
+    border-radius: 25px;
+    margin-bottom: 20px;
+    margin-right: 2px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1.15px;
+    background-color: #f0f6f4;
+    color: #a8a7a7;
+    box-shadow: 8px 8px 16px #d1d9e6, -8px -8px 16px #f9f9f9;
+    border: none;
+    outline: none;
+    transition: 0.5s;
+    transition-timing-function: ease-in;
+    transition-delay: 0.1s;
+}
+
+.st_inst_toggle_div{
+    margin-top: 0%;
 }

@@ -24,6 +24,27 @@ app.get("/",(req,res)=>{
     });
 });
 
+app.post("/studentlogin", async (req,res)=>{
+    console.log("Entered server side student login");
+    const user_id = req.body.user_id;
+    const password = req.body.password;
+    console.log(user_id, password);
+    var resul = await pool.query(
+        "SELECT * FROM auth WHERE user_id=$1 and password=$2 and type=$3",
+        [user_id, password, 0]
+    ).then((result)=>{
+        // console.log(err);
+        return result;
+    });
+    console.log("aha");
+    console.log(resul);
+    if(resul.rowCount>0){
+        res.send(resul);
+    } else{
+        res.send({message: "Incorrect Credentials"});
+    }
+})
+
 app.post("/register",(req,res)=>{
     console.log("Entered register");
     const rollnumber = req.body.rollnumber;
@@ -35,6 +56,8 @@ app.post("/register",(req,res)=>{
         (err,result)=>{
             console.log(err);
             console.log(result);
+            res.send(result);
+            console.log("sent");
         })
 })
 
