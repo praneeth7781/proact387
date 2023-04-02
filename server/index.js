@@ -71,11 +71,16 @@ app.post("/studentlogin", async (req,res)=>{
         // console.log(err);
         return result;
     });
-    req.session.user=resul;
     console.log("aha");
-    console.log(req.session.user);
+    // console.log(req.session.user);
     if(resul.rowCount>0){
-        res.send(resul);
+    req.session.user=resul;
+      var check=await pool.query("SELECT * FROM student WHERE roll_num=$1",[resul.rows[0].user_id]).then((check)=>{return check;})
+      console.log(check);
+      if (check.rowCount>0){
+        res.send({pres:true,resul:resul});
+      }else{
+        res.send({pres:false,resul:resul});}
     } else{
         res.send({message: "Incorrect Credentials"});
     }
@@ -95,6 +100,25 @@ app.post("/register",(req,res)=>{
             res.send(result);
             console.log("sent");
         })
+})
+app.post("/insert",(req,res)=>{
+  console.log("Entered register");
+  console.log(req.body);
+  const roll_num = req.body.rollnumber;
+  const name = req.body.name;
+  const dept_name = req.body.dept_name;
+  const eng_level=req.body.eng_level;
+  const hostel=req.body.hostel;
+  const room=req.body.room;
+  // console.log(rollnumber, password, name);
+  pool.query(
+      "INSERT INTO student VALUES ($1,$2,$3,$4,$5,$6);",[roll_num,name,dept_name,eng_level,hostel,room],
+      (err,result)=>{
+          console.log(err);
+          console.log(result);
+          res.send(result);
+          console.log("sent");
+      })
 })
 
 // "INSERT INTO auth VALUES (" + rollnumber + ",'"+password+"',0)",

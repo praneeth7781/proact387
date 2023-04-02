@@ -4,6 +4,7 @@ import "./App.css";
 
 import Login from "./components/login.js";
 import LandingPage from "./components/landingpage";
+import Dashboard from "./components/dashboard";
 // import OpenPage from "./components/openpage.js";
 // import Home from "./components/home.js";
 // import Signup from "./components/signup.js";
@@ -26,6 +27,7 @@ function App(){
           {/* <Route path="/login" element={<Login/>}/> */}
           <Route path="/" element={<Login/>}/>
           <Route path="/redirect" element={<LandingPage/>}/>
+          <Route path="/dashboard" element={<Dashboard/>}/>
           {/* <Route path="/home" element={<Home/>}/>
           <Route path="/home/registration" element={<Registration/>}/>
           <Route path="/instructor/:instructor_id" element={<Instructor/>}/>

@@ -44,8 +44,12 @@ function Login() {
         setLoginStatus(response.data.message);
       } else {
         console.log(response);
-        setLoginStatus(response.data.rows[0].user_id);
-        navigate('/redirect');
+        if(response.data.pres){
+        setLoginStatus(response.data.resul.rows[0].user_id);
+        navigate('/dashboard');}
+        else{
+          navigate('/redirect');
+        }
       }
     });
   }
@@ -62,6 +66,7 @@ function Login() {
 
 
   const [loginStatus, setLoginStatus] = useState("");
+  const [registerStatus, setRegisterStatus] = useState(false);
   const [userID, setUserID] = useState("");
   const [password, setPassword] = useState("");
   const [Status, setStatus] = useState(false);
@@ -92,8 +97,9 @@ function Login() {
       password: passwordreg,
       name: namereg,
     }).then((response)=>{
+      setRegisterStatus(true);
       console.log(response);
-      navigate('/redirect');
+      window.location.reload();
 
     })
   }
@@ -106,7 +112,7 @@ function Login() {
         console.log(Status);
       }
     });
-  }, [Status]);
+  }, [Status,registerStatus]);
 
   const [distog, setDisTog] = useState(false); //false is for student
 
