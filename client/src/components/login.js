@@ -31,7 +31,9 @@ function Login() {
 
   }
 
-  const studentlogin = async () => {
+  const studentlogin = async (e) => {
+    e.preventDefault();
+    console.log(e);
     console.log("Entered client-side student login");
     var wait = await Axios.post("http://localhost:8000/studentlogin",{
       user_id: useridlog,
@@ -83,25 +85,28 @@ function Login() {
     });
   };
 
-  const register = async () =>{
+  const register = async (e) =>{
+    e.preventDefault();
     var wait = await Axios.post("http://localhost:8000/register",{
       rollnumber: rollnumreg,
       password: passwordreg,
       name: namereg,
     }).then((response)=>{
-      console.log("Response received: "+response);
+      console.log(response);
+      navigate('/redirect');
+
     })
   }
 
-  // useEffect(() => {
-  //   Axios.get("http://localhost:8000/login").then((response) => {
-  //     if (response.data.loggedIn === true) {
-  //       setLoginStatus(response.data.user.rows[0].userID);
-  //       setStatus(true);
-  //       console.log(Status);
-  //     }
-  //   });
-  // }, [Status]);
+  useEffect(() => {
+    Axios.get("http://localhost:8000/login").then((response) => {
+      if (response.data.loggedIn === true) {
+        setLoginStatus(response.data.user.rows[0].userID);
+        setStatus(true);
+        console.log(Status);
+      }
+    });
+  }, [Status]);
 
   const [distog, setDisTog] = useState(false); //false is for student
 
@@ -123,6 +128,8 @@ function Login() {
   }
   const [togActive, setTogActive] = useState(false);//false is for signIn
   return (
+    Status?
+    navigate("/redirect"):
     <div className='body'>
 
       <div className="main">
@@ -153,7 +160,7 @@ function Login() {
               onChange={(e)=>{
                 setPasswordReg(e.target.value);
               }}/>
-              <button className="form__button button" type="submit" onClick={register}>SIGN UP</button>
+              <button className="form__button button" onClick={register}>SIGN UP</button>
           </form>
         </div>
         <div className={togActive ? "container b-container" : "container b-container is-txl is-z200"} id="b-container">
@@ -179,9 +186,10 @@ function Login() {
                 setPasswordLog(e.target.value);
               }}
             />
+            <h3 className='form_title title'>{loginStatus}</h3>
+            
             <button className='form__button button' onClick={distog? instlogin : studentlogin}>SIGN IN</button>
           </form>
-          {loginStatus}
         </div>
         <div className={togActive ? "switch" : "switch is-txr"} id="switch-cnt">
           <div className={togActive ? "switch__circle" : "switch__circle is-txr"}></div>

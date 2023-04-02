@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const config_obj = JSON.parse(fs.readFileSync("./config.txt",'utf8'));
 // var dotenv = require('dotenv').config;
-
+console.log(config_obj.db_config.password);
 var pool = new Pool({
     user: config_obj.db_config.user,
     host: config_obj.db_config.host,

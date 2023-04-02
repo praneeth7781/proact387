@@ -2,8 +2,11 @@ var express = require("express");
 var app = express();
 var cors = require("cors");
 var bodyparser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
 
 app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: true }));
 app.use(
     cors({
         origin: ["http://localhost:3000"],
@@ -11,6 +14,18 @@ app.use(
         credentials: true,
     })
 )
+app.use(cookieParser());
+app.use(
+  session({
+    key: "id",
+    secret: "good",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      expires: 60 * 60 * 24 * 1000,
+    },
+  })
+);
 
 var pool = require("./connect.js");
 
@@ -24,6 +39,18 @@ app.get("/",(req,res)=>{
     });
 });
 
+app.get("/login", (req, res) => {
+    if (req.session.user) {
+      res.send({
+        loggedIn: true,
+        user: req.session.user,
+      });
+    } else {
+      res.send({
+        loggedIn: false,
+      });
+    }
+  });
 app.post("/studentlogin", async (req,res)=>{
     console.log("Entered server side student login");
     const user_id = req.body.user_id;
@@ -36,8 +63,9 @@ app.post("/studentlogin", async (req,res)=>{
         // console.log(err);
         return result;
     });
+    req.session.user=resul;
     console.log("aha");
-    console.log(resul);
+    console.log(req.session.user);
     if(resul.rowCount>0){
         res.send(resul);
     } else{
