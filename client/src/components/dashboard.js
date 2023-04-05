@@ -30,7 +30,7 @@ function Dashboard(){
         Status?(
         <div className="dashboard">
             <h1>
-                dashboard Successful
+                Dashboard Successful
             </h1>
             <h1>
                 Please login to continue

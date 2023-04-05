@@ -7,6 +7,7 @@ import { redirect, useNavigate } from 'react-router-dom';
 function Login() {
 
 
+  Axios.defaults.withCredentials = true;
   var navigate = useNavigate();
   const [rollnumreg, setRollNumReg] = useState("");
   const [passwordreg, setPasswordReg] = useState("");
@@ -17,19 +18,6 @@ function Login() {
   const [useridlog, setUserIDLog] = useState("");
   const [passwordlog, setPasswordLog] = useState("");
 
-  const userlogin = async () => {
-    console.log("Entered client-side user login");
-    if(!distog){
-      var wait = await Axios.post("http://localhost:8000/login",{
-        user_id:useridlog,
-        password:passwordlog,
-        type:0
-      }).then((response)=>{
-        console.log("Reponse received: "+response);
-      })
-    }
-
-  }
 
   const studentlogin = async (e) => {
     e.preventDefault();
@@ -48,7 +36,7 @@ function Login() {
         setLoginStatus(response.data.resul.rows[0].user_id);
         navigate('/dashboard');}
         else{
-          navigate('/redirect');
+          navigate('/infogather');
         }
       }
     });
@@ -126,8 +114,6 @@ function Login() {
     setDisTog(true);
   }
 
-  
-
   const handleToggle = (e) => {
     e.preventDefault();
     setTogActive(!togActive);
@@ -153,7 +139,7 @@ function Login() {
             />
             <input 
               className="form__input" 
-              type="text" 
+              type="number" 
               placeholder="Roll Number"
               onChange={(e)=>{
                 setRollNumReg(e.target.value);

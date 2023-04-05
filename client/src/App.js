@@ -5,6 +5,8 @@ import "./App.css";
 import Login from "./components/login.js";
 import LandingPage from "./components/landingpage";
 import Dashboard from "./components/dashboard";
+import InfoGather from "./components/infogather";
+import ParentDetails from "./components/parentdetails";
 // import OpenPage from "./components/openpage.js";
 // import Home from "./components/home.js";
 // import Signup from "./components/signup.js";
@@ -28,6 +30,8 @@ function App(){
           <Route path="/" element={<Login/>}/>
           <Route path="/redirect" element={<LandingPage/>}/>
           <Route path="/dashboard" element={<Dashboard/>}/>
+          <Route path="/infogather" element={<InfoGather/>}/>
+          <Route path="/parentdetails" element={<ParentDetails/>}/>
           {/* <Route path="/home" element={<Home/>}/>
           <Route path="/home/registration" element={<Registration/>}/>
           <Route path="/instructor/:instructor_id" element={<Instructor/>}/>
