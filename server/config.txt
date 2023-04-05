@@ -1,9 +1,9 @@
 {
 	"db_config" : {
-		"user": "divyeswar",
+		"user": "username",
         "host": "localhost",
-        "database": "project",
-        "password": "8123",
+        "database": "dbname",
+        "password": "dbpassword",
         "port": 5432
 	}
 }
