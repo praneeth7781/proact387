@@ -7,10 +7,6 @@ function LandingPage(){
     const [Status, setStatus] = useState(false);
     const [roll_num,setRoll_num]=useState("");
     const [name,setName]=useState("");
-    const [dept_name,setDept_name]=useState("");
-    const [eng_level,setEng_level]=useState("");
-    const [hostel,setHostel]=useState("");
-    const [room,setRoom]=useState("");
     var resu = useRef([]);
 
     const navlogin=()=>{

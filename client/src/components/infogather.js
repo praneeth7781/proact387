@@ -33,6 +33,7 @@ export default function InfoGather() {
     const [name, setName] = useState("");
     const [hostel, setHostel] = useState("");
     const [room, setRoom] = useState("");
+    const [dept_name, setDeptName] = useState("");
 
     const [friend1, setFriend1] = useState("");
     const [friend2, setFriend2] = useState("");
@@ -59,8 +60,14 @@ export default function InfoGather() {
         if (name === "") {
             if (hostel === "") {
                 if (room === "") {
-                    alert("You can't leave the entire form empty!");
-                    return 0;
+                    if(dept_name === ""){
+                        alert("You can't leave the entire form empty!");
+                        return 0;
+                    }
+                    else {
+                        alert("Please fill in your Name, Hostel, and Room Number too!");
+                        return 0;
+                    }
                 }
                 else {
                     alert("We really need your name and hostel number too!");
@@ -74,6 +81,10 @@ export default function InfoGather() {
         }
         else if (hostel === "") {
             if (room === "") {
+                if(dept_name === ""){
+                    alert("Name alone won't work buddy!");
+                    return 0;
+                }
                 alert("Name alone doesn't suffice to exactly recognize you. You do live in some room in some hostel right? Please fill in those details too!");
                 return 0;
             }
@@ -83,7 +94,15 @@ export default function InfoGather() {
             }
         }
         else if (room === "") {
+            if(dept_name === ""){
+                alert("Department Name Please!");
+                return 0;
+            }
             alert("Well, we also need your room number to proceed!");
+            return 0;
+        }
+        else if(dept_name === ""){
+            alert("Department Name Please!");
             return 0;
         }
         return 1;
@@ -203,6 +222,14 @@ export default function InfoGather() {
                             placeholder="Name"
                             onChange={(e) => {
                                 setName(e.target.value);
+                            }}
+                        />
+                        <input
+                            className="form__input"
+                            type="text"
+                            placeholder="Department Name"
+                            onChange={(e) => {
+                                setDeptName(e.target.value);
                             }}
                         />
                         <input

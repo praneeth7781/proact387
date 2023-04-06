@@ -365,7 +365,7 @@ input::-webkit-inner-spin-button {
     /* margin-bottom: 200px; */
 }
 
-#switch-c1 button{
+#but1 {
     /* margin-top: -100px; */
     z-index: 2;
     transform: translateY(-200px);
