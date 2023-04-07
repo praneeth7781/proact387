@@ -139,6 +139,7 @@ export default function InfoGather() {
                 name: name,
                 room: room,
                 hostel: hostel,
+                dept_name: dept_name,
                 friend1: friend1,
                 friend2: friend2,
                 friend3: friend3,
