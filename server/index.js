@@ -233,26 +233,110 @@ app.post("/parentdetails", async (req,res)=>{
 	}
 })
 
-
-app.post("/insert", (req, res) => {
-	console.log("Entered register");
-	console.log(req.body);
-	const roll_num = req.body.rollnumber;
-	const name = req.body.name;
-	const dept_name = req.body.dept_name;
-	const eng_level = req.body.eng_level;
-	const hostel = req.body.hostel;
-	const room = req.body.room;
-	// console.log(rollnumber, password, name);
-	pool.query(
-		"INSERT INTO student VALUES ($1,$2,$3,$4,$5,$6);", [roll_num, name, dept_name, eng_level, hostel, room],
-		(err, result) => {
-			console.log(err);
-			console.log(result);
-			res.send(result);
-			console.log("sent");
-		})
+app.get("/instructorinfo", async (req,res)=>{
+	console.log("Entered server-side Instructor Info Fetching");
+	if(req.session.user){
+		var result = await pool.query(
+			"SELECT * FROM instructor WHERE id=$1;",
+			[req.session.user.rows[0].user_id]
+		).then((result)=>{
+			return result;
+		});
+		if(result.rowCount>0){
+			var instname = result.rows[0].name;
+			var instid = result.rows[0].id;
+			var instdept = result.rows[0].dept_name;
+			result = await pool.query(
+				"SELECT * FROM teaches natural join course where inst_id=$1",
+				[instid]
+			).then((result)=>{
+				return result;
+			});
+			if(result.rowCount>0){
+				const d = new Date();
+				let day = d.getDay();
+				console.log("Today: ",day);
+				var instinfo = result;
+				result = await pool.query(
+					"SELECT * FROM (teaches natural join course) natural join time_slot where inst_id=$1 and day=$2 order by start_hr, start_min",
+					[instid, day]
+				).then((result)=>{
+					return result;
+				});
+				console.log("This result: ",result);
+				if(result.rowCount>0){
+					result.rows.forEach(myfunction);
+					function myfunction(value, index, array){
+						if(value.start_hr<12 && value.end_hr<12){
+							value['start'] = 'AM';
+							value['end'] = 'AM';
+						} else if(value.start_hr<12 && value.end_hr>=12){
+							value['start'] = 'AM';
+							value['end'] = 'PM';
+						} else if(value.start_hr>=12){
+							value['start'] = 'PM';
+							value['end'] = 'PM';
+						}
+						if(value.start_min == 0){
+							console.log("Yep");
+							value['start_min'] = '00';
+						}
+						if(value.end_min == 0){
+							value['end_min'] = "00";
+						}
+					}
+					console.log(result);
+					res.send({
+						instname: instname,
+						instid: instid,
+						instdept: instdept,
+						instinfo: instinfo,
+						today: result
+					})
+				} else{
+					res.send({
+						instname: instname,
+						instid: instid,
+						instdept: instdept,
+						instinfo: instinfo,
+						noclassestoday: true
+					});
+				}
+			} else{
+				res.send({
+					nocourses: "No courses present!",
+					instname: instname,
+					instid: instid,
+					instdept: instdept
+				});
+			}
+		} else{
+			res.send({insterror: "Instructor Not Found!"});
+		}
+	} else {
+		res.send({message: "Session Error"});
+	}
 });
+
+app.post("/editinstinfo", async(req,res)=>{
+	console.log("Entered server-side Instructor Info Editing");
+	var editname = req.body.editname;
+	var editdept = req.body.editdept;
+
+	if(req.session.user){
+		var instid = req.session.user.rows[0].user_id;
+		var result = await pool.query(
+			"UPDATE instructor SET name = $1, dept_name = $2 where id=$3",
+			[editname, editdept, instid]
+		).then((result)=>{
+			res.send(result);
+			return result;
+		});
+	} else{
+		res.send({message: "Session Error"});
+	}
+
+})
 
 // "INSERT INTO auth VALUES (" + rollnumber + ",'"+password+"',0)",
 app.listen(8000, console.log("Server is running on port 8000"));
