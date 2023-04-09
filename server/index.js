@@ -4,7 +4,9 @@ var cors = require("cors");
 var bodyparser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-
+var nodemailer = require('nodemailer');
+// const msal = require('@azure/msal-node');
+// const fetch = require('node-fetch');
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(
@@ -28,6 +30,8 @@ app.use(
 );
 
 var pool = require("./connect.js");
+
+
 
 
 app.get("/", (req, res) => {
@@ -88,11 +92,11 @@ app.post("/studentlogin", async (req, res) => {
 			res.send({ pres: false, resul: resul });
 		}
 	} else {
-		res.send({ message: "Incorrect Credentials!"});
+		res.send({ message: "Incorrect Credentials!" });
 	}
 });
 
-app.post("/instlogin", async (req,res)=>{
+app.post("/instlogin", async (req, res) => {
 	console.log("Entered server side instructor login");
 	const user_id = req.body.user_id;
 	const password = req.body.password;
@@ -100,14 +104,14 @@ app.post("/instlogin", async (req,res)=>{
 	var resul = await pool.query(
 		"SELECT * FROM auth WHERE user_id=$1 and password=$2 and type=$3",
 		[user_id, password, 1]
-	).then((result)=>{
+	).then((result) => {
 		return result;
 	});
-	if(resul.rowCount > 0){
+	if (resul.rowCount > 0) {
 		req.session.user = resul;
-		res.send({success: "Logged In"});
+		res.send({ success: "Logged In" });
 	} else {
-		res.send({message: "Incorrect Credentials!"});
+		res.send({ message: "Incorrect Credentials!" });
 	}
 })
 
@@ -132,7 +136,7 @@ app.post("/infogather", async (req, res) => {
 	const name = req.body.name;
 	const hostel = req.body.hostel;
 	const room = req.body.room;
-	const dept_name =  req.body.dept_name;
+	const dept_name = req.body.dept_name;
 	const friend1 = req.body.friend1;
 	const friend2 = req.body.friend2;
 	const friend3 = req.body.friend3;
@@ -192,9 +196,9 @@ app.post("/infogather", async (req, res) => {
 				).then((result) => {
 					return result;
 				});
-				res.send({good: "Well Done Good!"});
+				res.send({ good: "Well Done Good!" });
 			} else {
-				res.send({error: "I am afraid few of your friends haven't yet come onboard our platform!"});
+				res.send({ error: "I am afraid few of your friends haven't yet come onboard our platform!" });
 			}
 		} else {
 			console.log("Not found");
@@ -207,81 +211,81 @@ app.post("/infogather", async (req, res) => {
 	}
 });
 
-app.post("/parentdetails", async (req,res)=>{
+app.post("/parentdetails", async (req, res) => {
 	console.log("Entered server-side parent details");
 	const parentname = req.body.parentname;
 	const parentmail = req.body.parentmail;
 	const facadname = req.body.facadname;
 	const facadmail = req.body.facadmail;
 
-	if(req.session.user){
+	if (req.session.user) {
 		var result = await pool.query(
 			"INSERT INTO receiver VALUES ($1, $2, 0, $3)",
 			[req.session.user.rows[0].user_id, parentname, parentmail]
-		).then((result)=>{
+		).then((result) => {
 			return result;
 		});
 		result = await pool.query(
 			"INSERT INTO receiver VALUES ($1, $2, 1, $3);",
 			[req.session.user.rows[0].user_id, facadname, facadmail]
-		).then((result)=>{
+		).then((result) => {
 			return result;
 		})
-		res.send({success: "Success"});
-	} else{
-		res.send({message: "Session Error"});
+		res.send({ success: "Success" });
+	} else {
+		res.send({ message: "Session Error" });
 	}
 })
 
-app.get("/instructorinfo", async (req,res)=>{
+app.get("/instructorinfo", async (req, res) => {
 	console.log("Entered server-side Instructor Info Fetching");
-	if(req.session.user){
+	if (req.session.user) {
 		var result = await pool.query(
 			"SELECT * FROM instructor WHERE id=$1;",
 			[req.session.user.rows[0].user_id]
-		).then((result)=>{
+		).then((result) => {
 			return result;
 		});
-		if(result.rowCount>0){
+		if (result.rowCount > 0) {
 			var instname = result.rows[0].name;
 			var instid = result.rows[0].id;
 			var instdept = result.rows[0].dept_name;
 			result = await pool.query(
 				"SELECT * FROM teaches natural join course where inst_id=$1",
 				[instid]
-			).then((result)=>{
+			).then((result) => {
 				return result;
 			});
-			if(result.rowCount>0){
+			if (result.rowCount > 0) {
 				const d = new Date();
 				let day = d.getDay();
-				console.log("Today: ",day);
+				console.log("Today: ", day);
 				var instinfo = result;
 				result = await pool.query(
 					"SELECT * FROM (teaches natural join course) natural join time_slot where inst_id=$1 and day=$2 order by start_hr, start_min",
 					[instid, day]
-				).then((result)=>{
+				).then((result) => {
 					return result;
 				});
-				console.log("This result: ",result);
-				if(result.rowCount>0){
+				console.log("This result: ", result);
+				if (result.rowCount > 0) {
 					result.rows.forEach(myfunction);
-					function myfunction(value, index, array){
-						if(value.start_hr<12 && value.end_hr<12){
+					function myfunction(value, index, array) {
+						if (value.start_hr < 12 && value.end_hr < 12) {
 							value['start'] = 'AM';
 							value['end'] = 'AM';
-						} else if(value.start_hr<12 && value.end_hr>=12){
+						} else if (value.start_hr < 12 && value.end_hr >= 12) {
 							value['start'] = 'AM';
 							value['end'] = 'PM';
-						} else if(value.start_hr>=12){
+						} else if (value.start_hr >= 12) {
 							value['start'] = 'PM';
 							value['end'] = 'PM';
 						}
-						if(value.start_min == 0){
+						if (value.start_min == 0) {
 							console.log("Yep");
 							value['start_min'] = '00';
 						}
-						if(value.end_min == 0){
+						if (value.end_min == 0) {
 							value['end_min'] = "00";
 						}
 					}
@@ -293,7 +297,7 @@ app.get("/instructorinfo", async (req,res)=>{
 						instinfo: instinfo,
 						today: result
 					})
-				} else{
+				} else {
 					res.send({
 						instname: instname,
 						instid: instid,
@@ -302,7 +306,7 @@ app.get("/instructorinfo", async (req,res)=>{
 						noclassestoday: true
 					});
 				}
-			} else{
+			} else {
 				res.send({
 					nocourses: "No courses present!",
 					instname: instname,
@@ -310,32 +314,115 @@ app.get("/instructorinfo", async (req,res)=>{
 					instdept: instdept
 				});
 			}
-		} else{
-			res.send({insterror: "Instructor Not Found!"});
+		} else {
+			res.send({ insterror: "Instructor Not Found!" });
 		}
 	} else {
-		res.send({message: "Session Error"});
+		res.send({ message: "Session Error" });
 	}
 });
 
-app.post("/editinstinfo", async(req,res)=>{
+app.post("/courseinfo", async (req, res) => {
+	console.log("Entered server-side course info fetching");
+	var course_id = req.body.course_id;
+	if (req.session.user) {
+		var result = await pool.query(
+			"SELECT * FROM (course natural join time_slot) natural join teaches where course_id=$1",
+			[course_id]
+		).then((result) => {
+			return result;
+		});
+		if (result.rowCount > 0) {
+			var course_name = result.rows[0].title;
+
+		}
+	} else {
+		res.send({ message: "Session Error" });
+	}
+})
+
+app.post("/editinstinfo", async (req, res) => {
 	console.log("Entered server-side Instructor Info Editing");
 	var editname = req.body.editname;
 	var editdept = req.body.editdept;
 
-	if(req.session.user){
+	if (req.session.user) {
 		var instid = req.session.user.rows[0].user_id;
 		var result = await pool.query(
 			"UPDATE instructor SET name = $1, dept_name = $2 where id=$3",
 			[editname, editdept, instid]
-		).then((result)=>{
+		).then((result) => {
 			res.send(result);
 			return result;
 		});
-	} else{
-		res.send({message: "Session Error"});
+	} else {
+		res.send({ message: "Session Error" });
 	}
 
+});
+
+app.get("/dashdisplay", async (req, res) => {
+	console.log("Dash display lo ki vacchindhi");
+	var A = new Date();
+	var B = A.getDay()
+	// console.log(B);
+	if (req.session.user) {
+		console.log("User session details dashdisplay");
+		var result = await pool
+			.query(
+				"SELECT * FROM student WHERE roll_num=$1;", [req.session.user.rows[0].user_id]
+			)
+			.then((result) => {
+				return result;
+			});
+		var course_inf = await pool.query(
+			`select * from takes,course,time_slot where takes.course_id=course.course_id and 
+		takes.stud_id=$1 and course.time_slot_id=time_slot.time_slot_id and time_slot.day='1'`, [req.session.user.rows[0].user_id]
+		)
+		var deadline_inf = await pool.query(
+			`select * from takes,course,deadlines where takes.course_id=course.course_id and 
+		takes.stud_id=$1 and course.course_id=deadlines.course_id and deadlines.end_time>$2`, [req.session.user.rows[0].user_id, A]
+		)
+		fin = { stud: result, course: course_inf, deadline: deadline_inf }
+
+		console.log(req.session.user.rows);
+
+		console.log(result);
+		res.send(fin);
+	} else {
+		console.log("display session");
+		console.log(req.session.user);
+		res.send({ message: "Session error" });
+	}
+});
+
+app.get("/friendsfetch", async (req, res) => {
+	console.log("Entered server-side Friends Fetch");
+	if (req.session.user) {
+		var result = await pool.query(
+			"SELECT id1 FROM friends WHERE id2=$1",
+			[req.session.user.rows[0].user_id]
+		).then((result) => {
+			return result;
+		});
+		console.log(result);
+		res.send({ friends: result });
+	} else {
+		res.send({ message: "Session Error" });
+	}
+});
+
+app.get("/sendemail", async (req, res) => {
+	console.log("Entered server-side send email");
+	transporter.sendMail(mailOptions, function (error, info) {
+		if (error) {
+			console.log(error);
+			res.send({ error: error });
+		} else {
+			console.log('Email sent: ' + info.response);
+			res.send({ message: "Success" });
+		}
+	});
 })
 
 // "INSERT INTO auth VALUES (" + rollnumber + ",'"+password+"',0)",

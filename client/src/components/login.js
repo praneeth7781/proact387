@@ -186,18 +186,24 @@ function Login() {
 
 
             <div className={togActive ? "switch__container" : "switch__container is-hidden"} id="switch-c1">
-              <h2 className="switch__title title">Welcome Buddy!</h2>
+            <img src="Logo.png" alt="We Care Logo" id="wecarelogo"/>
+              {/* <h2 className="switch__title title">Welcome Buddy!</h2> */}
+              <div id="emoo2">
               <p className="switch__description description">Looking for the Login page?<br></br>Here you go!</p>
               <button className="switch__button button switch-btn" id='signin' onClick={e => handleToggle(e)}>SIGN IN</button>
+              </div>
             </div>
 
 
 
 
             <div className={togActive ? "switch__container is-hidden" : "switch__container"} id="switch-c2">
-              <h2 className="switch__title title">Hey There!</h2>
-              <p className="switch__description description">Is this your first time here? <br></br>Sign up to start your journey with us!</p>
-              <button className="switch__button button switch-btn" onClick={e => handleToggle(e)}>SIGN UP</button>
+              <img src="Logo.png" alt="We Care Logo" id="wecarelogo"/>
+              <div id="emoo">
+                {/* <h2 className="switch__title title">Hey There!</h2> */}
+                <p className="switch__description description">Is this your first time here? <br></br>Sign up to start your journey with We Care!</p>
+                <button className="switch__button button switch-btn" onClick={e => handleToggle(e)}>SIGN UP</button>
+              </div>
             </div>
 
 

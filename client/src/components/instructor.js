@@ -11,7 +11,7 @@ export default function Instructor() {
     const navigate = useNavigate();
 
     var [fetched, setFetched] = useState(false);
-    var [edited, setEdited] = useState(false);
+    // var [edited, setEdited] = useState(false);
     var [coursespresent, setCoursesPresent] = useState(false);
     var [classestoday, setClassesToday] = useState(false);
     var instname = useRef("Name");
@@ -72,27 +72,27 @@ export default function Instructor() {
 
     useEffect(() => {
         infofetch();
-    }, [fetched, coursespresent, classestoday, edited]);
+    }, [fetched, coursespresent, classestoday]);
 
-    const togglepopup = async(e)=>{
+    const togglepopup = async (e) => {
         e.preventDefault();
         setEditPopup(!editpopup);
     }
 
-    var editpersonalinfo = async(e)=>{
+    var editpersonalinfo = async (e) => {
         e.preventDefault();
-        if(editname==="" || editdept === ""){
+        if (editname === "" || editdept === "") {
             alert("None of the fields should be left empty!");
             return 0;
         } else {
-            var wait = Axios.post("/editinstinfo",{
+            var wait = Axios.post("/editinstinfo", {
                 editname: editname,
                 editdept: editdept
-            }).then((response)=>{
+            }).then((response) => {
                 console.log(response);
-                if(response.data.message){
+                if (response.data.message) {
                     alert("There seems to be a problem with our server. Please hang on while we fix it!");
-                } else{
+                } else {
                     console.log("Ippudocchindhii");
                     window.location.reload();
                     // setEdited(!edited);
@@ -108,6 +108,11 @@ export default function Instructor() {
             //     setEditPopup(false);
             // }
         }
+    }
+
+    const gotocourse = async (x) => {
+        console.log("Goto ", x);
+        navigate("/course/" + x);
     }
 
     const logout = () => {
@@ -138,11 +143,11 @@ export default function Instructor() {
                                     <span>Department:</span>
                                     <span>{instdept.current}</span>
                                 </div>
-                                <button className="button2" onClick={togglepopup}>EDIT</button>
+                                <button className="button2" onClick={e => togglepopup(e)}>EDIT</button>
                                 <ReactModal
-                                    isOpen = {editpopup}
+                                    isOpen={editpopup}
                                     ariaHideApp={false}
-                                    contentLabel = "Example Modal"
+                                    contentLabel="Example Modal"
                                 >
                                     <form className="form">
                                         <input
@@ -150,7 +155,7 @@ export default function Instructor() {
                                             type="text"
                                             placeholder="Name"
                                             value={editname}
-                                            onChange={(e)=>{
+                                            onChange={(e) => {
                                                 setEditName(e.target.value);
                                             }}
                                         />
@@ -159,7 +164,7 @@ export default function Instructor() {
                                             type="text"
                                             placeholder="Department Name"
                                             value={editdept}
-                                            onChange={(e)=>{
+                                            onChange={(e) => {
                                                 setEditDept(e.target.value);
                                             }}
                                         />
@@ -177,12 +182,10 @@ export default function Instructor() {
                                         return (
                                             <div key={key}>
                                                 <div className="course" onClick={async () => {
-                                                    navigate("/");
+                                                    gotocourse(val.course_id);
                                                 }}>
                                                     <div className="course-details">
                                                         <h3>{val.title}, {val.dept_name}</h3>
-                                                        {/* <button className="button">Hello</button>
-                                        <button className="edit-btn" >GO</button> */}
                                                     </div>
                                                 </div>
                                             </div>
@@ -249,7 +252,35 @@ export default function Instructor() {
                                     <span>Department:</span>
                                     <span>{instdept.current}</span>
                                 </div>
-                                <a href="#" className="edit-btn">Edit</a>
+                                <button className="button2" onClick={e => togglepopup(e)}>EDIT</button>
+                                <ReactModal
+                                    isOpen={editpopup}
+                                    ariaHideApp={false}
+                                    contentLabel="Example Modal"
+                                >
+                                    <form className="form">
+                                        <input
+                                            className="form__input"
+                                            type="text"
+                                            placeholder="Name"
+                                            value={editname}
+                                            onChange={(e) => {
+                                                setEditName(e.target.value);
+                                            }}
+                                        />
+                                        <input
+                                            className="form__input"
+                                            type="text"
+                                            placeholder="Department Name"
+                                            value={editdept}
+                                            onChange={(e) => {
+                                                setEditDept(e.target.value);
+                                            }}
+                                        />
+                                        <button className="button2" onClick={e => editpersonalinfo(e)}>SUBMIT</button>
+                                        <button className="button2" onClick={togglepopup}>CLOSE</button>
+                                    </form>
+                                </ReactModal>
                             </div>
                             <div className="courses">
                                 <div>
@@ -316,7 +347,35 @@ export default function Instructor() {
                                 <span>Department:</span>
                                 <span>{instdept.current}</span>
                             </div>
-                            <a href="#" className="edit-btn">Edit</a>
+                            <button className="button2" onClick={e => togglepopup(e)}>EDIT</button>
+                            <ReactModal
+                                isOpen={editpopup}
+                                ariaHideApp={false}
+                                contentLabel="Example Modal"
+                            >
+                                <form className="form">
+                                    <input
+                                        className="form__input"
+                                        type="text"
+                                        placeholder="Name"
+                                        value={editname}
+                                        onChange={(e) => {
+                                            setEditName(e.target.value);
+                                        }}
+                                    />
+                                    <input
+                                        className="form__input"
+                                        type="text"
+                                        placeholder="Department Name"
+                                        value={editdept}
+                                        onChange={(e) => {
+                                            setEditDept(e.target.value);
+                                        }}
+                                    />
+                                    <button className="button2" onClick={e => editpersonalinfo(e)}>SUBMIT</button>
+                                    <button className="button2" onClick={togglepopup}>CLOSE</button>
+                                </form>
+                            </ReactModal>
                         </div></div></div>
             :
             <h2>Busss</h2>
