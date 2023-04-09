@@ -91,7 +91,40 @@ app.post("/studentlogin", async (req, res) => {
 		res.send({ message: "Incorrect Credentials!"});
 	}
 });
-
+app.get("/dashdisplay", async (req, res) => {
+	console.log("Dash display lo ki vacchindhi");
+	var A = new Date();
+var B = A.getDay()
+// console.log(B);
+	if (req.session.user) {
+	  console.log("User session details dashdisplay");
+	  var result = await pool
+		.query(
+		  "SELECT * FROM student WHERE roll_num='" + req.session.user.rows[0].user_id + "';"
+		)
+		.then((result) => {
+		  return result;
+		});
+	var course_inf=await pool.query(
+		`select * from takes,course,time_slot where takes.course_id=course.course_id and 
+		takes.stud_id=$1 and course.time_slot_id=time_slot.time_slot_id and time_slot.day='1'`,[req.session.user.rows[0].user_id ]
+	)
+	var deadline_inf=await pool.query(
+		`select * from takes,course,deadlines where takes.course_id=course.course_id and 
+		takes.stud_id=$1 and course.course_id=deadlines.course_id and deadlines.end_time>$2`,[req.session.user.rows[0].user_id,A ]
+	)
+	fin={stud:result,course:course_inf,deadline:deadline_inf}
+  
+	  console.log(req.session.user.rows);
+  
+	  console.log(result);
+	  res.send(fin);
+	} else {
+	  console.log("display session");
+	  console.log(req.session.user);
+	  res.send({ message: "Session error" });
+	}
+  });
 app.post("/instlogin", async (req,res)=>{
 	console.log("Entered server side instructor login");
 	const user_id = req.body.user_id;

@@ -138,6 +138,7 @@ export default function Instructor() {
                                     <span>Department:</span>
                                     <span>{instdept.current}</span>
                                 </div>
+                                
                                 <button className="button2" onClick={togglepopup}>EDIT</button>
                                 <ReactModal
                                     isOpen = {editpopup}
