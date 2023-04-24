@@ -7,7 +7,7 @@ import LandingPage from "./components/landingpage";
 import Dashboard from "./components/dashboard";
 import InfoGather from "./components/infogather";
 import ParentDetails from "./components/parentdetails";
-import Instructor from "./components/instructor";
+import Instructor from "./components/instructor1";
 import Course from "./components/course";
 import Insights from "./components/insights";
 // import OpenPage from "./components/openpage.js";

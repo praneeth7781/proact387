@@ -4,9 +4,87 @@ var cors = require("cors");
 var bodyparser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-var nodemailer = require('nodemailer');
-// const msal = require('@azure/msal-node');
-// const fetch = require('node-fetch');
+
+
+// Emails
+require("dotenv").config();
+const nodemailer = require('nodemailer');
+const {google} = require('googleapis');
+const OAuth2 = google.auth.OAuth2;
+
+
+const createTransporter = async () => {
+	console.log("Entered Create Transporter Function");
+	const oauth2client = new OAuth2(
+		process.env.CLIENT_ID,
+		process.env.CLIENT_SECRET,
+		"https://developers.google.com/oauthplayground"
+	);
+	console.log("Done 1");
+	oauth2client.setCredentials({
+		refresh_token: process.env.REFRESH_TOKEN2
+	});
+	console.log("Done 2");
+
+	const accessToken = await new Promise((resolve, reject)=>{
+		oauth2client.getAccessToken((err, token)=>{
+			if(err){
+				reject("Failed");
+			}
+			resolve(token);
+		});
+	});
+
+	// accessToken.then((message)=>{
+	// 	console.log("Access Token");
+	// }).catch((error)=>{
+	// 	console.log(error);
+	// })
+	console.log("Done 3");
+	
+	const transporter = nodemailer.createTransport({
+		// service: "gmail",
+		service: "gmail",
+		host: "smtp.gmail.com",
+		// port: 587,
+		// secure: false,
+		auth: {
+			// user: "manipraneeth2307@gmail.com",
+			// pass: "mfkjlnwqysznmefm"
+			type: "OAuth2",
+			user: process.env.EMAIL,
+			accessToken,
+			clientId: process.env.CLIENT_ID,
+			clientSecret: process.env.CLIENT_SECRET,
+			refreshToken: process.env.REFRESH_TOKEN2
+		}
+	});
+	console.log("Done 4");
+
+	return transporter;
+};
+
+const sendEmail = async (emailOptions) => {
+	console.log("Entered server-side Send Email");
+	let emailTransporter = await createTransporter();
+	console.log(emailTransporter);
+	// console.log("env_variables", process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.EMAIL)
+	const result = await emailTransporter.sendMail(emailOptions);
+	console.log(JSON.stringify(result,null,4));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(
@@ -30,7 +108,6 @@ app.use(
 );
 
 var pool = require("./connect.js");
-
 
 
 
@@ -413,16 +490,14 @@ app.get("/friendsfetch", async (req, res) => {
 });
 
 app.get("/sendemail", async (req, res) => {
-	console.log("Entered server-side send email");
-	transporter.sendMail(mailOptions, function (error, info) {
-		if (error) {
-			console.log(error);
-			res.send({ error: error });
-		} else {
-			console.log('Email sent: ' + info.response);
-			res.send({ message: "Success" });
-		}
+
+	sendEmail({
+		subject: "Test",
+		text: "Pani chesindhi roooooooo",
+		to: "manipraneethedu@gmail.com",
+		from: process.env.EMAIL
 	});
+	res.send({success: "Emoo evadiki thelsu"})
 })
 
 // "INSERT INTO auth VALUES (" + rollnumber + ",'"+password+"',0)",
