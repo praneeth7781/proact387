@@ -1,9 +1,9 @@
 {
 	"db_config" : {
-		"user": "username",
-        "host": "localhost",
-        "database": "dbname",
-        "password": "dbpassword",
+		"user": "postgres",
+        "host": "Localhost",
+        "database": "project",
+        "password": "rprv7353",
         "port": 5432
 	}
 }

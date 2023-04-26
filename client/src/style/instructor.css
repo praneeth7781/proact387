@@ -1,6 +1,6 @@
 /* Dashboard Body */
 .dashboard-body {
-    background: url('../../public/assets/images/ai-generated-g229de01c3_1920.jpg') no-repeat;
+    /* background: url('../../public/assets/images/ai-generated-g229de01c3_1920.jpg') no-repeat; */
     background-size: cover;
     width: 100%;
     /* backdrop-filter: blur(20px); */
@@ -78,26 +78,7 @@
     /* column-fill: auto; */
 }
 
-.courses-grid {
-    display: grid;
-    grid-template-columns: auto auto auto;
-}
 
-.courses h2 {
-    font-size: 32px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #444;
-}
-
-.course {
-    display: flex;
-    width: 450px;
-    margin-bottom: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
 
 .course-img {
     width: 150px;
@@ -229,13 +210,13 @@
     }
 
     .personal-info,
-    .courses,
+   
     .today-classes {
         padding: 20px;
     }
 
     .personal-info h2,
-    .courses h2,
+    
     .today-classes h2 {
         font-size: 28px;
     }
@@ -265,13 +246,13 @@
     }
 
     .personal-info,
-    .courses,
+    
     .today-classes {
         padding: 10px;
     }
 
     .personal-info h2,
-    .courses h2,
+    
     .today-classes h2 {
         font-size: 24px;
         margin-bottom: 10px;

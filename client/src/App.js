@@ -10,6 +10,7 @@ import ParentDetails from "./components/parentdetails";
 import Instructor from "./components/instructor1";
 import Course from "./components/course";
 import Insights from "./components/insights";
+import Courses from "./components/courses";
 // import OpenPage from "./components/openpage.js";
 // import Home from "./components/home.js";
 // import Signup from "./components/signup.js";
@@ -38,6 +39,7 @@ function App(){
           <Route path="/instructor" element={<Instructor/>}/>
           <Route path="/course/:course_id" element={<Course/>}/> 
           <Route path="/insights" element={<Insights/>}/>
+          <Route path="/instructor/courses" element={<Courses/>}/>
           {/* <Route path="/home" element={<Home/>}/>
           <Route path="/home/registration" element={<Registration/>}/>
           <Route path="/instructor/:instructor_id" element={<Instructor/>}/>
