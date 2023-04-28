@@ -134,7 +134,7 @@ function NavBar() {
         </ul>
       </nav>
       <div className='space-class'></div>
-      {/* <header></header> */}
+     
     </div>
     // <div className="nav-container backdrop-filter backdrop-blur-lg">
     //   <nav className="sticky top-0 z-10 bg-white">

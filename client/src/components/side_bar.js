@@ -121,11 +121,11 @@ export default function Side_bar() {
 
 
     return (
-        <div className="side-board">
+        <div className="side-board" >
             <div className="entire">
-                <div className='blurrypersinfo'>
-                    <div className="form_ok">
-                        {/* <h2>Personal Information</h2> */}
+                <div className='blurrypersinfo' >
+                    <div className="form_ok" >
+                        <h2>Personal Information</h2>
                         <div className="info-item">
                             {/* <span>Name:</span> */}
                             <span></span>
@@ -172,6 +172,86 @@ export default function Side_bar() {
                         </ReactModal>
 
                     </div>
+
+                </div>
+                <div style={{height:"50px"}}></div>
+                <div className='add_assgn'>
+
+                    <ul style={{ listStyle: 'none',alignItems: 'center', justifyContent: 'center' }}>
+                        <li style={{ display: 'block' , borderBottom: '1px solid black', paddingBottom: '5px'}}> 
+                            <button className="button3" onClick={toggleassgnpopup}>ADD</button>
+                    <ReactModal
+                        isOpen={editassgnpopup}
+                        ariaHideApp={false}
+                        contentLabel="Example Modal"
+                    >
+                        <form className="form">
+
+
+                            {coursedata.current &&
+                                <select value={deptcourse} onChange={handleChange()} className="form__input">
+                                    <option value="">Select an option</option>
+                                    {coursedata.current.map((item, index) => (
+                                        <option value={item.title}>{item.title}</option>
+                                    ))}
+                                </select>
+                            }
+                            <input
+                                className="form__input"
+                                type="text"
+                                placeholder="Title"
+
+                                onChange={(e) => {
+                                    setEditAssgn(e.target.value);
+                                }}
+                            />
+                            <input className="form__input" type="datetime-local" placeholder='Deadline' onChange={(e) => {
+                                setDeadline(e.target.value);
+                            }} />
+                            <button className="button2" onClick={e => assignment_add(e)}>SUBMIT</button>
+                            <button className="button2" onClick={toggleassgnpopup}>CLOSE</button>
+                        </form>
+                    </ReactModal>
+                        </li>
+                        <li style={{ display: 'block' }} >
+                        <button className="button3" onClick={toggleattenpopup}>ADD</button>
+                    <ReactModal
+                        isOpen={editattenpopup}
+                        ariaHideApp={false}
+                        contentLabel="Example Modal"
+                        classNames={{
+                            overlay: "customOverlay",
+                            modal: "customModal",
+                        }}>
+                        <form className="form">
+
+                            {coursedata.current &&
+                                <select value={deptcourse} onChange={handleChange()} className="form__input">
+                                    <option value="">Select an option</option>
+                                    {coursedata.current.map((item, index) => (
+                                        <option value={item.title}>{item.title}</option>
+                                    ))}
+                                </select>
+                            }
+
+
+                            <input
+
+                                type="file"
+                                accept=".csv"
+
+                                onChange={(e) => {
+                                    setEditAssgn(e.target.value);
+                                }}
+                            />
+
+
+                            <button className="button2" onClick={e => assignment_add(e)}>SUBMIT</button>
+                            <button className="button2" onClick={toggleattenpopup}>CLOSE</button>
+                        </form>
+                    </ReactModal>
+                        </li>
+                    </ul>
                 </div>
                 <div className='add_assgn'>
                     <h2>add Assignment</h2>
@@ -209,6 +289,7 @@ export default function Side_bar() {
                         </form>
                     </ReactModal>
                 </div>
+                <div style={{height:"50px"}}></div>
                 <div className='add_assgn'>
                     <h2>Upload Attendance</h2>
                     <button className="button3" onClick={toggleattenpopup}>ADD</button>

@@ -4,11 +4,10 @@ import Side_bar from "./side_bar";
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../style/instructor.css";
-import NavBar from "./navbar";
-// import { extend } from '@syncfusion/ej2-base';
-// import { ScheduleComponent, ViewDirective,Day, Week,WorkWeek,Month,Agenda,Inject, Resize, ExcelExport, DragAndDrop, ViewsDirective } from '@syncfusion/ej2-react-schedule';
-import { Link } from "react-router-dom";
-// import Courses from "courses"; 
+// import NavBar from "./navbar";
+import Modal from 'react-modal';
+// import { Link } from "react-router-dom";
+import { Link, useMatch, useResolvedPath } from 'react-router-dom';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment'
@@ -102,7 +101,13 @@ export default function Instructor() {
   
   // add a state variable to hold the course that was clicked
   const [selectedCourse, setSelectedCourse] = useState(null);
-  
+  const logout = () => {
+    // setLoginStatus(false);
+    Axios.get("http://localhost:8000/logout").then((response) => {
+      console.log(response);
+    });
+    navigate("/");
+  };
    
 
    
@@ -112,24 +117,105 @@ export default function Instructor() {
     return (
         
         <div>
-        <NavBar/>
+            {/* <NavBar/> */}
+            <div>
+      <nav>
+        <Link to="/" className="site-title">
+          We Care!
+        </Link>
+        <ul>
+          {/* <CustomLink to="/instructor">Home</CustomLink> */}
+          {/* <CustomLink to="#courses">Courses</CustomLink> */}
+          <a href="#calendar">Timetable</a>
+          <a href="#courses">Courses</a>
+          <button onClick={logout} className='button3'>Logout</button>
+        </ul>
+      </nav>
+      <div className='space-class'></div>
+     
+    </div>
        
-               <div style={{display:'flex'}}>
-               <Side_bar/>
-               <div style={{ height: "100vh" ,width:"100%"}}>           
-               <Calendar
-    events={events}
-    startAccessor="start"
-    endAccessor="end"
-    // defaultDate={moment().toDate()}
-    style={{ height: "100%" ,width:"100%"}}
-    localizer={localizer}
-    />      
-    </div>      
-          
-                   
-                   </div>
-            </div>   
+               <div style={{display:'flex',flexDirection:"row"}}>
+                    <Side_bar/>
+                    <div style={{flex:1}}>
+                    <div style={{ height: "100vh" ,width:"100%"}} id="calendar">           
+                            <Calendar
+                            events={events}
+                            startAccessor="start"
+                            endAccessor="end"
+                            // defaultDate={moment().toDate()}
+                            style={{ height: "100%" ,width:"100%"}}
+                            localizer={localizer}
+                            />   
+
+                        </div>  
+
+                        <div style={{height:"50px"}}></div>
+
+                        <div className="courses" id="courses">
+                                <div >
+                                    <h2 style={{textAlign:"center",fontSize:"32px",color:"rgb(25, 185, 217)"}}>Courses</h2>
+                                </div>
+                                {coursedata.current && coursedata.current.length > 0 && (
+                                                        <div className="courses-grid">
+                                                        {coursedata.current.map((val, key) => {
+                                                            return (
+                                                                <div key={key}>
+                                                                    <div className="course" onClick={async () => {
+                                                                        // navigate("/");
+                                                                        // <Modal >
+                                                                        //     <h2>val.title</h2>
+                                                                        // </Modal>
+                                                                        setSelectedCourse(val);  // set the selected course
+                                                                        setIsModalOpen(true);
+
+                                                                    }}>
+                                                                        <div className="course-details">
+                                                                            <h2>{val.title}</h2>
+                                                                            <h3>{val.dept_name}</h3>
+                                                                            {/* <button className="button">Hello</button>
+                                                            <button className="edit-btn" >GO</button> */}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                        </div>
+                                )}
+
+                                {
+                                    !coursedata.current || coursedata.current.length == 0 &&(
+                                        <h2>....loading....</h2>
+                                    )
+
+                                }
+                                {/* style={{ content: { width: '75%', height: '75%' ,float:'center'} }} */}
+             
+                                <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} className="modalform">
+                                        {selectedCourse && (
+                                            <div className="modal_div"> 
+                                            <button className="close-btn" onClick={() => setIsModalOpen(false) }>X</button>
+                                           
+
+                                            {/* <span class="close">&times;</span> */}
+                                            <h2>{selectedCourse.title}</h2>
+                                            <p color="white">{selectedCourse.dept_name}</p>
+                                            {/* add other details of the selected course */}
+                                            </div>
+                                        )}
+                                {/* <button onClick={() => setIsModalOpen(false)}>Close</button> */}
+                                </Modal>
+                                
+                    </div>
+                    
+
+                        </div>
+
+
+                        
+                </div>
+                
+        </div>   
        
                      
                                  
@@ -139,6 +225,21 @@ export default function Instructor() {
             
     )
 };
+
+// function CustomLink({ to, children, ...props }) {
+//     const resolvedPath = useResolvedPath(to)
+//     const isActive = useMatch({ path: resolvedPath.pathname, end: true })
+  
+//     return (
+//       <li className={isActive ? "active" : ""}>
+//         <Link to={to} {...props}>
+//           {children}
+//         </Link>
+//       </li>
+//     )
+//   }
+
+
 
 
 
