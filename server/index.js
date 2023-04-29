@@ -437,6 +437,48 @@ app.post("/editinstinfo", async (req, res) => {
 	}
 
 });
+app.post("/updateeng", async (req, res) => {
+	console.log("Entered server-side Instructor Info Editing");
+	var val = parseFloat(req.body.val);
+	var roll_num_fr = req.body.roll_num;
+	console.log(val, roll_num_fr)
+	if (req.session.user) {
+		var st_id = req.session.user.rows[0].user_id;
+		var result = await pool.query(
+			"UPDATE student SET eng_level=$1 where roll_num=$2;",
+			[val,roll_num_fr]
+		).then((result) => {
+			res.send(result);
+			if(val<30){
+				result = pool.query(
+					"SELECT * FROM receiver WHERE stud_id=$1",
+					[roll_num_fr]
+				).then((result)=>{
+					// console.log(result.rows.mailid);
+					console.log("Helloo broo");
+					console.log(result);
+					sendEmail({
+						subject: "Test",
+						text: "Engagement Level dropped below 30",
+						to: result.rows[0].mailid,
+						from: process.env.EMAIL
+					});
+					sendEmail({
+						subject: "Test",
+						text: "Engagement Level dropped below 30",
+						to: result.rows[1].mailid,
+						from: process.env.EMAIL
+					});
+				});
+			}
+			return result;
+		});
+	} else {
+		res.send({ message: "Session Error" });
+	}
+
+});
+
 
 app.get("/dashdisplay", async (req, res) => {
 	console.log("Dash display lo ki vacchindhi");
@@ -482,8 +524,14 @@ app.get("/friendsfetch", async (req, res) => {
 		).then((result) => {
 			return result;
 		});
-		console.log(result);
-		res.send({ friends: result });
+		var resul= await pool.query(
+			"SELECT * FROM Student WHERE roll_num=$1",
+			[req.session.user.rows[0].user_id]
+		).then((resul) => {
+			return resul;
+		});
+		console.log(resul);
+		res.send({ user:resul,friends: result });
 	} else {
 		res.send({ message: "Session Error" });
 	}
