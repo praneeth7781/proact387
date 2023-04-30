@@ -3,6 +3,10 @@ import React, { useEffect, useRef, useState } from "react";
 import ReactModal from 'react-modal';
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import { FaPlus } from "react-icons/fa";
+import { FaEdit } from 'react-icons/fa';
+
 export default function Side_bar() {
     Axios.defaults.withCredentials = true;
 
@@ -21,6 +25,7 @@ export default function Side_bar() {
     var [editassgn, setEditAssgn] = useState(false);
     var [deptcourse, setDeptcourse] = useState(false);
     var [deadline, setDeadline] = useState(false);
+    var [starttime,setStarttime] = useState(false);
     var today = useRef(null);
     var [editpopup, setEditPopup] = useState(false);
     var [editassgnpopup, setEditassgnpopup] = useState(false);
@@ -115,37 +120,74 @@ export default function Side_bar() {
     };
     console.log("-----------------hi-------------")
     console.log(coursedata);
-    const assignment_add = () => (e) => {
+    const assignment_add = async(e) => {
+        console.log("--------after--------");
+        // // console.log(e);
+        // console.log(deptcourse,editassgn,deadline);
+        e.preventDefault();
+        if(editassgn==="" || starttime==="" || deadline==="" || deptcourse==="" ){
+            alert("None of the fields should be left empty!");
+            return 0;
+        }
+       
+        // Send a request to the server to add the assignment data to the database
+        else{
+            axios.post('/api/assignments', {
+            title: editassgn,
+            start_time: starttime,
+            end_time: deadline,
+            course: deptcourse
+
+        }).then((response) => {
+            console.log(response);
+            if (response.data.message) {
+                alert("There seems to be a problem with our server. Please hang on while we fix it!");
+            } else {
+                console.log("Ippudocchindhii");
+                toggleassgnpopup();
+                window.location.reload();
+            }
+            return response;
+        });
+    
+    }
+    }
+    const attendenceadd=()=>async(e)=>{
 
     }
 
 
     return (
-        <div className="side-board" >
-            <div className="entire">
-                <div className='blurrypersinfo' >
-                    <div className="form_ok" >
-                        <h2>Personal Information</h2>
+        <div style={{ width: "19rem", position: "fixed", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            
+            <div style={{backdropFilter:"blur(8px)",backgroundColor:"rgba(0,0,0, 0.06)",borderRadius:"10px"}}>
+                
+                    
+            <h2 style={{textAlign:"center"}}>Personal Information</h2>
+                        <div className="info-item" style={{textAlign:"center"}}>
+                            
+                            <span>ID:</span>
+                            <span>{instid.current}</span>
+                        </div>
                         <div className="info-item">
-                            {/* <span>Name:</span> */}
-                            <span></span>
+                            
+                            <span>NAME:</span>
                             <span>{instname.current}</span>
                         </div>
                         <div className="info-item">
-                            {/* <span>ID:</span> */}
-                            <span></span>
-                            <span>@{instid.current}</span>
-                        </div>
-                        <div className="info-item">
-                            {/* <span>Department:</span> */}
-                            <span></span>
+                            <span>Department:</span>
+                            {/* <span></span> */}
                             <span>{instdept.current}</span>
                         </div>
-                        <button className="button3" onClick={togglepopup}>EDIT</button>
+                        <div style={{display: "flex", justifyContent: "center"}}>
+                        <button className="button3" onClick={togglepopup}><FaEdit className="icon" /></button>
+                        </div>
                         <ReactModal
                             isOpen={editpopup}
                             ariaHideApp={false}
                             contentLabel="Example Modal"
+                            className="modalform" 
+                            overlayClassName="modal-overlay"
                         >
                             <form className="form">
                                 <input
@@ -171,19 +213,25 @@ export default function Side_bar() {
                             </form>
                         </ReactModal>
 
-                    </div>
+                    
+                    
 
                 </div>
                 <div style={{height:"50px"}}></div>
                 <div className='add_assgn'>
 
-                    <ul style={{ listStyle: 'none',alignItems: 'center', justifyContent: 'center' }}>
-                        <li style={{ display: 'block' , borderBottom: '1px solid black', paddingBottom: '5px'}}> 
-                            <button className="button3" onClick={toggleassgnpopup}>ADD</button>
+                    <ul style={{ listStyle: 'none',alignItems: 'center', justifyContent: 'center',margin: 'auto'}}>
+                        <li style={{ display: 'table' , borderBottom: '1px solid black', paddingBottom: '5px'}}> 
+                            <button className="button4" onClick={toggleassgnpopup} style={{backgroundColor:"inherit",border:"none",
+                        padding:"14px 28px",fontSize:"16px",cursor:'pointer',display:'inline-block',':hover':{backgroundColor:"black"}}} ><FaPlus className="icon" />
+                        <span>    ADD ASSIGNMENT</span> </button>
+
                     <ReactModal
                         isOpen={editassgnpopup}
                         ariaHideApp={false}
                         contentLabel="Example Modal"
+                        className="modalform" 
+                        overlayClassName="modal-overlay"
                     >
                         <form className="form">
 
@@ -192,11 +240,11 @@ export default function Side_bar() {
                                 <select value={deptcourse} onChange={handleChange()} className="form__input">
                                     <option value="">Select an option</option>
                                     {coursedata.current.map((item, index) => (
-                                        <option value={item.title}>{item.title}</option>
+                                        <option value={item.course_id}>{item.title}</option>
                                     ))}
                                 </select>
                             }
-                            <input
+                              <input
                                 className="form__input"
                                 type="text"
                                 placeholder="Title"
@@ -205,6 +253,10 @@ export default function Side_bar() {
                                     setEditAssgn(e.target.value);
                                 }}
                             />
+                            <input className="form__input" type="datetime-local" placeholder='Start' onChange={(e) => {
+                                setStarttime(e.target.value);
+                            }} />
+                            
                             <input className="form__input" type="datetime-local" placeholder='Deadline' onChange={(e) => {
                                 setDeadline(e.target.value);
                             }} />
@@ -213,16 +265,17 @@ export default function Side_bar() {
                         </form>
                     </ReactModal>
                         </li>
-                        <li style={{ display: 'block' }} >
-                        <button className="button3" onClick={toggleattenpopup}>ADD</button>
+                        <li style={{ display: 'table', paddingBottom: '5px'}}> 
+                        
+                            <button className="button4" onClick={toggleattenpopup} style={{backgroundColor:"inherit",border:"none",
+                        padding:"14px 28px",fontSize:"16px",cursor:'pointer',display:'inline-block',':hover':{backgroundColor:"black"}}} ><FaPlus className="icon" />
+                        <span>    ADD ATTENDANCE</span></button>
                     <ReactModal
                         isOpen={editattenpopup}
                         ariaHideApp={false}
                         contentLabel="Example Modal"
-                        classNames={{
-                            overlay: "customOverlay",
-                            modal: "customModal",
-                        }}>
+                        className="modalform" 
+                        overlayClassName="modal-overlay">
                         <form className="form">
 
                             {coursedata.current &&
@@ -246,90 +299,14 @@ export default function Side_bar() {
                             />
 
 
-                            <button className="button2" onClick={e => assignment_add(e)}>SUBMIT</button>
+                            <button className="button2" onClick={e => attendenceadd(e)}>SUBMIT</button>
                             <button className="button2" onClick={toggleattenpopup}>CLOSE</button>
                         </form>
                     </ReactModal>
                         </li>
                     </ul>
-                </div>
-                <div className='add_assgn'>
-                    <h2>add Assignment</h2>
-                    <button className="button3" onClick={toggleassgnpopup}>ADD</button>
-                    <ReactModal
-                        isOpen={editassgnpopup}
-                        ariaHideApp={false}
-                        contentLabel="Example Modal"
-                    >
-                        <form className="form">
-
-
-                            {coursedata.current &&
-                                <select value={deptcourse} onChange={handleChange()} className="form__input">
-                                    <option value="">Select an option</option>
-                                    {coursedata.current.map((item, index) => (
-                                        <option value={item.title}>{item.title}</option>
-                                    ))}
-                                </select>
-                            }
-                            <input
-                                className="form__input"
-                                type="text"
-                                placeholder="Title"
-
-                                onChange={(e) => {
-                                    setEditAssgn(e.target.value);
-                                }}
-                            />
-                            <input className="form__input" type="datetime-local" placeholder='Deadline' onChange={(e) => {
-                                setDeadline(e.target.value);
-                            }} />
-                            <button className="button2" onClick={e => assignment_add(e)}>SUBMIT</button>
-                            <button className="button2" onClick={toggleassgnpopup}>CLOSE</button>
-                        </form>
-                    </ReactModal>
-                </div>
-                <div style={{height:"50px"}}></div>
-                <div className='add_assgn'>
-                    <h2>Upload Attendance</h2>
-                    <button className="button3" onClick={toggleattenpopup}>ADD</button>
-                    <ReactModal
-                        isOpen={editattenpopup}
-                        ariaHideApp={false}
-                        contentLabel="Example Modal"
-                        classNames={{
-                            overlay: "customOverlay",
-                            modal: "customModal",
-                        }}>
-                        <form className="form">
-
-                            {coursedata.current &&
-                                <select value={deptcourse} onChange={handleChange()} className="form__input">
-                                    <option value="">Select an option</option>
-                                    {coursedata.current.map((item, index) => (
-                                        <option value={item.title}>{item.title}</option>
-                                    ))}
-                                </select>
-                            }
-
-
-                            <input
-
-                                type="file"
-                                accept=".csv"
-
-                                onChange={(e) => {
-                                    setEditAssgn(e.target.value);
-                                }}
-                            />
-
-
-                            <button className="button2" onClick={e => assignment_add(e)}>SUBMIT</button>
-                            <button className="button2" onClick={toggleattenpopup}>CLOSE</button>
-                        </form>
-                    </ReactModal>
-                </div>
-            </div>
+                </div> 
+            
         </div>
     );
 }

@@ -10,20 +10,13 @@ import Modal from 'react-modal';
 import { Link, useMatch, useResolvedPath } from 'react-router-dom';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import moment from 'moment'
+import moment from 'moment-timezone'
 import { datetime, RRule, RRuleSet, rrulestr } from 'rrule'
-
+import {A,B,C,D,E,F,G,H,I,J,K,L,getObjectById,generateEvents} from './timeslots'
 const localizer = momentLocalizer(moment);
+const timezone = moment.tz.guess();
 
-const recurrenceRule = rrulestr('FREQ=WEEKLY;BYDAY=TU,TH;COUNT=10');
 
-const events = recurrenceRule.all().map(date => ({
-  title: 'Weekly Meeting',
-  start: moment(date).toDate(),
-  end: moment(date).add(1, 'hour').toDate(),
-}));
-console.log("----events----");
-console.log(events);
 
 export default function Instructor() {
 
@@ -91,12 +84,23 @@ export default function Instructor() {
   
     useEffect(() => {
         infofetch();
+        courseevent();
     }, [fetched, coursespresent, classestoday, edited]);
+    const [events, Setevents] = useState([]);
+      var courseevent=async()=>{
+ 
+    if (coursedata.current) {
+        const eventArray = coursedata.current.flatMap((course) =>
+          generateEvents(getObjectById(course.time_slot_id), course.title)
+        );
+        Setevents(eventArray);
+      }
+    };
+    console.log("-----------------new--------------");
+    console.log(events);
   
-  
-  
-    console.log("-----------------hi-------------")
-    console.log(coursedata);
+    // console.log("-----------------hi-------------")
+    // console.log(coursedata);
     const [isModalOpen, setIsModalOpen] = useState(false);
   
   // add a state variable to hold the course that was clicked
@@ -108,8 +112,64 @@ export default function Instructor() {
     });
     navigate("/");
   };
-   
-
+  const [coursestud, setCoursestud] = useState(null);
+  const fetchdata=async()=>{
+    setCoursestud(null);
+    const wait = await Axios.post("/api/fetchdata",{
+       course_id: selectedCourse.course_id
+    }).then((response)=>{
+        if(response.data.message){
+            alert("There seems to be a problem with our server. Please hang on while we fix it!");
+        } else{
+            console.log("Ippudocchindhii");
+                    // window.location.reload();
+        }
+        return response;
+    });
+    console.log("result for fetch data");
+    console.log(wait.data.result.rows);
+    setCoursestud(wait.data.result.rows);
+    
+  }
+  const [emailSubject, setEmailSubject] = useState("");
+  const [emailBody, setEmailBody] = useState("");
+  const [emailroll,setEmailRoll] = useState("");
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const handleButtonClick = (stud) => {
+    // event.preventDefault();
+    console.log("---button---");
+    console.log(stud);
+    setEmailRoll(stud.roll_num);
+    setEmailSubject("");
+    setEmailBody("");
+    setIsEmailModalOpen(true);
+  };
+  
+const sendemail=async(e)=>{
+    e.preventDefault();
+    if(emailBody==="" || emailSubject===""){
+        alert("None of the fields should be left empty!");
+        return 0;
+    }
+    else{
+        var wait = Axios.post("/instcontact", {
+            roll_num: emailroll,
+            subject: emailSubject,
+            mail: emailBody,
+        }).then((response) => {
+            console.log(response);
+            if (response.data.message) {
+                alert("There seems to be a problem with our server. Please hang on while we fix it!");
+            } else {
+                // console.log("Ippudocchindhii");
+                // window.location.reload();
+                
+            }
+            setIsEmailModalOpen(!isEmailModalOpen);
+            return response;
+        });
+    }
+}
    
 
   
@@ -124,8 +184,6 @@ export default function Instructor() {
           We Care!
         </Link>
         <ul>
-          {/* <CustomLink to="/instructor">Home</CustomLink> */}
-          {/* <CustomLink to="#courses">Courses</CustomLink> */}
           <a href="#calendar">Timetable</a>
           <a href="#courses">Courses</a>
           <button onClick={logout} className='button3'>Logout</button>
@@ -137,15 +195,17 @@ export default function Instructor() {
        
                <div style={{display:'flex',flexDirection:"row"}}>
                     <Side_bar/>
-                    <div style={{flex:1}}>
+                    <div style={{flex:1,marginLeft:"20rem"}} >
                     <div style={{ height: "100vh" ,width:"100%"}} id="calendar">           
                             <Calendar
                             events={events}
                             startAccessor="start"
                             endAccessor="end"
                             // defaultDate={moment().toDate()}
+
                             style={{ height: "100%" ,width:"100%"}}
                             localizer={localizer}
+                            timezone={timezone}
                             />   
 
                         </div>  
@@ -156,32 +216,40 @@ export default function Instructor() {
                                 <div >
                                     <h2 style={{textAlign:"center",fontSize:"32px",color:"rgb(25, 185, 217)"}}>Courses</h2>
                                 </div>
-                                {coursedata.current && coursedata.current.length > 0 && (
-                                                        <div className="courses-grid">
-                                                        {coursedata.current.map((val, key) => {
-                                                            return (
-                                                                <div key={key}>
-                                                                    <div className="course" onClick={async () => {
-                                                                        // navigate("/");
-                                                                        // <Modal >
-                                                                        //     <h2>val.title</h2>
-                                                                        // </Modal>
-                                                                        setSelectedCourse(val);  // set the selected course
-                                                                        setIsModalOpen(true);
+                               
+                                                           {coursedata.current && coursedata.current.length > 0 && (
+    <div >
+      {/* Get unique department names and sort them */}
+      {Array.from(new Set(coursedata.current.map(course => course.dept_name)))
+        .sort()
+        .map(dept_name => (
+          <React.Fragment key={dept_name}>
+            {/* Display the department heading */}
+            <div className="department-heading"  style={{ display: 'block' }}>
+              <h3 style={{ marginTop: "20px" , textAlign: "center", fontSize: "24px", fontWeight: "bold"}}>{dept_name}</h3>
+            </div>
 
-                                                                    }}>
-                                                                        <div className="course-details">
-                                                                            <h2>{val.title}</h2>
-                                                                            <h3>{val.dept_name}</h3>
-                                                                            {/* <button className="button">Hello</button>
-                                                            <button className="edit-btn" >GO</button> */}
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            );
-                                                        })}
-                                                        </div>
-                                )}
+            {/* Display the courses for the department */}
+            {coursedata.current.filter(course => course.dept_name === dept_name)
+              .map((val, key) => (
+                <div key={key} className="courses-grid">
+                  <div className="course" onClick={async () => {
+                    setSelectedCourse(val);
+                    setIsModalOpen(true);
+                  }}>
+                    <div className="course-details">
+                      <h2>{val.title}</h2>
+                      <h3>{val.dept_name}</h3>
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+          </React.Fragment>
+        ))
+      }
+    </div>
+  )}
 
                                 {
                                     !coursedata.current || coursedata.current.length == 0 &&(
@@ -189,22 +257,58 @@ export default function Instructor() {
                                     )
 
                                 }
-                                {/* style={{ content: { width: '75%', height: '75%' ,float:'center'} }} */}
-             
-                                <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} className="modalform">
+                                
+                                <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} className="modalform" 
+                                overlayClassName="modal-overlay"    onAfterOpen={fetchdata}  >
                                         {selectedCourse && (
                                             <div className="modal_div"> 
                                             <button className="close-btn" onClick={() => setIsModalOpen(false) }>X</button>
                                            
 
-                                            {/* <span class="close">&times;</span> */}
                                             <h2>{selectedCourse.title}</h2>
                                             <p color="white">{selectedCourse.dept_name}</p>
-                                            {/* add other details of the selected course */}
+<div style={{overflow:"auto" ,maxHeight:"300px",overflowY:"auto" }}>
+                                            <table style={{borderSpacing:'10px',margin:'0 auto'}}>
+        <thead>
+          <tr>
+            <th>Roll Number</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Engagement Level</th>
+            <th> Extra-curricular Engagement Level</th>
+            <th> SEND</th>
+          </tr>
+        </thead>
+        <tbody>
+          {coursestud && coursestud.map((stud, index) => (
+            <tr key={index}>
+              <td>{stud.roll_num}</td>
+              <td>{stud.name}</td>
+              <td>{stud.dept_name}</td>
+              <td>{stud.eng_level}</td>
+              <td>{stud.ec_eng_level}</td>
+              <td><button className="button3" onClick={() => handleButtonClick(stud)}>Button</button></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      </div>
+
                                             </div>
                                         )}
-                                {/* <button onClick={() => setIsModalOpen(false)}>Close</button> */}
                                 </Modal>
+                                <Modal isOpen={isEmailModalOpen} onRequestClose={() => setIsEmailModalOpen(false)} className="modalform1" overlayClassName="modal-overlay">
+  <form>
+    <label htmlFor="subject">Subject:</label>
+    <input type="text" id="subject" value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} />
+
+    <label htmlFor="body">Body:</label>
+    <textarea id="body" value={emailBody} onChange={(e) => setEmailBody(e.target.value)} />
+
+    <button onClick={sendemail} className="button3">Send</button>
+    <button onClick={()=>setIsEmailModalOpen(false)} className="button3">Close</button>
+  </form>
+</Modal>
                                 
                     </div>
                     
@@ -226,18 +330,7 @@ export default function Instructor() {
     )
 };
 
-// function CustomLink({ to, children, ...props }) {
-//     const resolvedPath = useResolvedPath(to)
-//     const isActive = useMatch({ path: resolvedPath.pathname, end: true })
-  
-//     return (
-//       <li className={isActive ? "active" : ""}>
-//         <Link to={to} {...props}>
-//           {children}
-//         </Link>
-//       </li>
-//     )
-//   }
+
 
 
 

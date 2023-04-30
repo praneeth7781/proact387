@@ -294,7 +294,7 @@ app.post("/parentdetails", async (req, res) => {
 	const parentmail = req.body.parentmail;
 	const facadname = req.body.facadname;
 	const facadmail = req.body.facadmail;
-
+	
 	if (req.session.user) {
 		var result = await pool.query(
 			"INSERT INTO receiver VALUES ($1, $2, 0, $3)",
@@ -313,6 +313,86 @@ app.post("/parentdetails", async (req, res) => {
 		res.send({ message: "Session Error" });
 	}
 })
+
+app.post("/api/assignments",async(req,res)=>{
+	const title = req.body.title;
+	const start_time = req.body.start_time;
+	const end_time = req.body.end_time;
+	const course = req.body.course;
+	console.log(req.session.user);
+	console.log("in assign");
+	if(req.session.user){
+		var result = await pool.query(
+			"insert into deadlines values($1,$2,$3,$4,$5);",
+			[req.session.user.rows[0].user_id,course,start_time,end_time,title]
+		).then ((result)=>{
+			return result;
+		});
+		console.log("now result --");
+		console.log(result);
+		res.send({success:"Success"});
+	} 
+	else{
+		res.send({message:"session error"});
+	}
+})
+
+app.post("/api/fetchdata",async(req,res)=>{
+	const course_id = req.body.course_id;
+	const inst_id = req.session.user.rows[0].user_id;
+	var result = await pool.query(
+		// "select student.roll_num,student.name,student.dept_name,student.eng_level from takes,student,teaches where takes.stud_id=student.roll_num and takes.course_id=teaches.course_id and teaches.inst_id=$1 and teaches.course_id=$2;",
+		"select * from (select roll_num,name,dept_name,eng_level,course_id,ec_eng_level from student join takes on student.roll_num=takes.stud_id) as a natural join teaches where inst_id=$1 and course_id=$2;",
+		[inst_id,course_id]
+	).then((result)=>{
+		return result;
+	});
+	console.log("try fetching");
+	console.log(result);
+	res.send({success:"Success",result:result});
+})
+
+app.post("/api/fetchstud",async(req,res)=>{
+	const course_id = req.body.course_id;
+	const stud_id = req.session.user.rows[0].user_id;
+	var result = await pool.query(
+		// "select student.roll_num,student.name,student.dept_name,student.eng_level from takes,student,teaches where takes.stud_id=student.roll_num and takes.course_id=teaches.course_id and teaches.inst_id=$1 and teaches.course_id=$2;",
+		// "select * from (select roll_num,name,dept_name,eng_level,course_id,ec_eng_level from student join takes on student.roll_num=takes.stud_id) as a natural join teaches where inst_id=$1 and course_id=$2;",
+		// "select deadlines.name,deadlines.inst_id,deadlines.start_time,deadlines.end_time,student_deadlines.done,student_deadlines.course_id from deadlines left outer join student_deadlines on deadlines.name = student_deadlines.name and deadlines.inst_id=student_deadlines.inst_id and deadlines.course_id = student_deadlines.course_id and deadlines.inst_id=student_deadlines.inst_id and student_id=$1 and deadlines.course_id=$2;",
+		// select A.name,A.inst_id,A.start_time,A.end_time,B.done from (select * from deadlines where course_id=482) as A left outer join student_deadlines as B on A.name=B.name and A.inst_id=B.inst_id and A.course_id=B.course_id and student_id = 200050016;
+		"select A.name,A.inst_id,A.start_time,A.end_time,B.done,A.course_id from (select * from deadlines where course_id=$2) as A left outer join student_deadlines as B on A.name=B.name and A.inst_id=B.inst_id and A.course_id=B.course_id and student_id = $1;",
+		[stud_id,course_id]
+	).then((result)=>{
+		return result;
+	});
+	console.log("try fetching");
+	console.log(result);
+	res.send({success:"Success",result:result});
+
+})
+
+app.post("/api/handlecheck",async(req,res)=>{
+	const course_id = req.body.course_id;
+	const done = req.body.done;
+	const inst_id = req.body.inst_id;
+	const name = req.body.name;
+	const stud_id = req.session.user.rows[0].user_id;
+	// insert into student_deadlines values(200050016,22591,642,'ok',false)
+	//  on conflict (student_id,inst_id,course_id,name) do update set done=true;
+	if (req.session.user) {
+	var result = await pool.query(
+		"insert into student_Deadlines(student_id,inst_id,course_id,name,done) values($1,$2,$3,$4,$5) on conflict (student_id,inst_id,course_id,name) do update set done = $5",
+		[stud_id,inst_id,course_id,name,done]
+	).then((result)=>{
+		return result;
+	});
+	res.send({success:"Success",result:result});
+}
+else{
+	res.send({message:"session error"});
+}
+})
+
 
 app.get("/instructorinfo", async (req, res) => {
 	console.log("Entered server-side Instructor Info Fetching");
@@ -438,6 +518,113 @@ app.post("/editinstinfo", async (req, res) => {
 
 });
 
+
+app.post("/instcontact",async(req,res)=>{
+	var roll_num = req.body.roll_num;
+	var subject=req.body.subject;
+	var mail = req.body.mail;
+	if(req.session.user){
+		var result = await pool.query(
+			"select * from student where roll_num = $1",[roll_num]
+		).then((result)=>{
+			sendEmail({
+				subject:subject,
+				text:mail,
+				to:result.rows[0].mailid,
+				from:process.env.EMAIL
+			});
+			res.send(true);
+		});
+	} else{
+		res.send({message:"Session Error!"});
+	}
+})
+
+app.post("/updateeng", async (req, res) => {
+	console.log("Entered server-side Instructor Info Editing");
+	var val = parseFloat(req.body.val);
+	var roll_num_fr = req.body.roll_num;
+	console.log(val, roll_num_fr)
+	if (req.session.user) {
+		var st_id = req.session.user.rows[0].user_id;
+		var result = await pool.query(
+			"UPDATE student SET eng_level=$1 where roll_num=$2;",
+			[val,roll_num_fr]
+		).then((result) => {
+			res.send(result);
+			if(val<30){
+				result = pool.query(
+					"SELECT * FROM receiver WHERE stud_id=$1",
+					[roll_num_fr]
+				).then((result)=>{
+					// console.log(result.rows.mailid);
+					console.log("Helloo broo");
+					console.log(result);
+					sendEmail({
+						subject: "Test",
+						text: "Engagement Level dropped below 30",
+						to: result.rows[0].mailid,
+						from: process.env.EMAIL
+					});
+					sendEmail({
+						subject: "Test",
+						text: "Engagement Level dropped below 30",
+						to: result.rows[1].mailid,
+						from: process.env.EMAIL
+					});
+				});
+			}
+			return result;
+		});
+	} else {
+		res.send({ message: "Session Error" });
+	}
+
+});
+
+
+app.post("/update_ec_eng", async (req, res) => {
+	console.log("Entered server-side Instructor Info Editing");
+	var val = parseFloat(req.body.val);
+	var roll_num_fr = req.body.roll_num;
+	console.log(val, roll_num_fr)
+	if (req.session.user) {
+		var st_id = req.session.user.rows[0].user_id;
+		var result = await pool.query(
+			"UPDATE student SET ec_eng_level=$1 where roll_num=$2;",
+			[val,roll_num_fr]
+		).then((result) => {
+			res.send(result);
+			if(val<30){
+				result = pool.query(
+					"SELECT * FROM receiver WHERE stud_id=$1",
+					[roll_num_fr]
+				).then((result)=>{
+					// console.log(result.rows.mailid);
+					console.log("Helloo broo");
+					console.log(result);
+					sendEmail({
+						subject: "Test",
+						text: "Engagement Level dropped below 30",
+						to: result.rows[0].mailid,
+						from: process.env.EMAIL
+					});
+					sendEmail({
+						subject: "Test",
+						text: "Engagement Level dropped below 30",
+						to: result.rows[1].mailid,
+						from: process.env.EMAIL
+					});
+				});
+			}
+			return result;
+		});
+	} else {
+		res.send({ message: "Session Error" });
+	}
+
+});
+
 app.get("/dashdisplay", async (req, res) => {
 	console.log("Dash display lo ki vacchindhi");
 	var A = new Date();
@@ -477,13 +664,35 @@ app.get("/friendsfetch", async (req, res) => {
 	console.log("Entered server-side Friends Fetch");
 	if (req.session.user) {
 		var result = await pool.query(
-			"SELECT id1 FROM friends WHERE id2=$1",
+			"SELECT id1 FROM friends WHERE id2=$1 ",
 			[req.session.user.rows[0].user_id]
 		).then((result) => {
 			return result;
 		});
 		console.log(result);
-		res.send({ friends: result });
+		res.send({ friends: result,user: req.session.user});
+	} else {
+		res.send({ message: "Session Error" });
+	}
+});
+
+app.post("/friendinfo", async (req, res) => {
+	console.log("Entered server-side Friend Info");
+	let roll_num=req.session.user;
+	if(!req.body.roll_num) roll_num=req.session.user.rows[0].user_id;
+	else roll_num = req.body.roll_num;
+	console.log(roll_num);
+	console.log(req.body);
+	if (req.session.user) {
+		var result = await pool.query(
+			"SELECT * from student where roll_num = $1",
+			[roll_num]
+		).then((result) => {
+			return result;
+		});
+		console.log("result :");
+		console.log(result);
+		res.send({ user: result});
 	} else {
 		res.send({ message: "Session Error" });
 	}
