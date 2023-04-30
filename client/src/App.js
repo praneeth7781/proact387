@@ -4,7 +4,7 @@ import "./App.css";
 
 import Login from "./components/login.js";
 import LandingPage from "./components/landingpage";
-import Dashboard from "./components/dashboard";
+import Dashboard from "./components/dashboard1";
 import InfoGather from "./components/infogather";
 import ParentDetails from "./components/parentdetails";
 import Instructor from "./components/instructor1";
