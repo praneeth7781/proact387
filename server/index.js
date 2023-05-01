@@ -212,8 +212,9 @@ app.post("/infogather", async (req, res) => {
 	console.log("Entered Info Gather");
 	const name = req.body.name;
 	const hostel = req.body.hostel;
-	const room = req.body.room;
+	const room = req.body.room; 
 	const dept_name = req.body.dept_name;
+	const mailid=req.body.mailid;
 	const friend1 = req.body.friend1;
 	const friend2 = req.body.friend2;
 	const friend3 = req.body.friend3;
@@ -238,8 +239,8 @@ app.post("/infogather", async (req, res) => {
 			console.log("Roll Number is ", req.session.user.rows[0].user_id);
 			if (result.rowCount > 0) {
 				var result2 = await pool.query(
-					"INSERT INTO student VALUES ($1, $2, $5, 30, $3, $4);",
-					[roll_num, name, hostel, room, dept_name]
+					"INSERT INTO student(roll_num,name,dept_name,eng_level,hostel,room,ec_eng_level,mailid) VALUES ($1, $2, $5, 30, $3, $4,30,$6);",
+					[roll_num, name, hostel, room, dept_name,mailid]
 				).then((result) => {
 					return result;
 				});
