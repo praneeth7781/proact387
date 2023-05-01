@@ -34,7 +34,7 @@ export default function InfoGather() {
     const [hostel, setHostel] = useState("");
     const [room, setRoom] = useState("");
     const [dept_name, setDeptName] = useState("");
-
+    const [mailid,setMailid]=useState("");
     const [friend1, setFriend1] = useState("");
     const [friend2, setFriend2] = useState("");
     const [friend3, setFriend3] = useState("");
@@ -105,6 +105,10 @@ export default function InfoGather() {
             alert("Department Name Please!");
             return 0;
         }
+        if(mailid===""){
+            alert("Mail id please!");
+            return 0;
+        }
         return 1;
     }
 
@@ -140,6 +144,7 @@ export default function InfoGather() {
                 room: room,
                 hostel: hostel,
                 dept_name: dept_name,
+                mailid:mailid,
                 friend1: friend1,
                 friend2: friend2,
                 friend3: friend3,
@@ -223,6 +228,14 @@ export default function InfoGather() {
                             placeholder="Name"
                             onChange={(e) => {
                                 setName(e.target.value);
+                            }}
+                        />
+                        <input
+                            className="form__input"
+                            type="mail"
+                            placeholder=" mail"
+                            onChange={(e) => {
+                                setMailid(e.target.value);
                             }}
                         />
                         <input

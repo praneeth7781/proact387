@@ -274,7 +274,7 @@ export const A = {
     id: 'L',
     startTimes: {
       'monday': [
-        new Date('2023-05-01T14:00:00-10:00:00'),
+        new Date('2023-05-01T14:00:00'),
         
       ],
       

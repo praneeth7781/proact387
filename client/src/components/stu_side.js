@@ -114,6 +114,7 @@ export default function Stu_side() {
                 <button className="button2" onClick={e => sendemail(e)} style={{alignItems:"center",display:"flex",justifyContent:"center"}}>Send Email</button>
                 </div>
            </div>
+          
         </div>
       
     ):(<div>
