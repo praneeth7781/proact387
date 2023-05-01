@@ -65,11 +65,7 @@ function LandingPage(){
             <button onClick={logout}>Logout</button>
         </div>)
         :
-        (<div className="openpage">
-        <h1>User Not Logged In</h1>
-        <h1>Please Login</h1>
-        <button className="button-17" onClick={navlogin}>LOGIN</button>
-    </div>)
+        navigate("/")
     )
 }
 

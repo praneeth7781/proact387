@@ -233,7 +233,7 @@ export default function InfoGather() {
                         <input
                             className="form__input"
                             type="mail"
-                            placeholder=" mail"
+                            placeholder="Mail ID"
                             onChange={(e) => {
                                 setMailid(e.target.value);
                             }}

@@ -79,25 +79,25 @@ function Dashboard() {
   return Status && datafetched ? (
     <div className="dashboard-body">
       <div className="personal-info">
-        <h2>Personal Information</h2>
+        {/* <h2>Personal Information</h2> */}
         <div className="info-item">
-          <span>Name:</span>
+          <span></span>
           <span>{userdata.current.name}</span>
         </div>
         <div className="info-item">
-          <span>ID:</span>
+          <span></span>
           <span>{userdata.current.roll_num}</span>
         </div>
         <div className="info-item">
-          <span>Department:</span>
+          <span></span>
           <span>{userdata.current.dept_name}</span>
         </div>
         <div className="info-item">
-          <span>Hostel:</span>
+          <span></span>
           <span>{userdata.current.hostel}</span>
         </div>
         <div className="info-item">
-          <span>Room No:</span>
+          <span></span>
           <span>{userdata.current.room}</span>
         </div>
         <div className="info-item">

@@ -21,18 +21,6 @@ export default function Stu_side() {
       navigate("/insights");
     }
   
-    const sendemail = async(e) => {
-      console.log("Send Email");
-      e.preventDefault();
-      const response = await Axios.get("http://localhost:8000/sendemail");
-      console.log("Came here");
-      if(response.data.success){
-        alert("Check your email box");
-      } else{
-        alert("Error");
-      }
-    }
-  
     var [datafetched, setDataFetched] = useState(false);
     async function userdetailsfetching() {
       const response = await Axios.get("http://localhost:8000/dashdisplay");
@@ -83,36 +71,36 @@ export default function Stu_side() {
             <div style={{backdropFilter:"blur(8px)",backgroundColor:"rgba(0,0,0, 0.06)",borderRadius:"10px"}}>
                 <h2 style={{textAlign:"center"}}>Personal Information</h2>
                 <div className="info-item" style={{textAlign:"center"}}>
-                    <span>Name:</span>
+                    <span></span>
                     <span>{userdata.current.name}</span>
                 </div>
                 <div className="info-item" style={{textAlign:"center"}}>
-                    <span>ID:</span>
+                    <span></span>
                     <span>{userdata.current.roll_num}</span>
                 </div>
                 <div className="info-item" style={{textAlign:"center"}}>
-                    <span>Department:</span>
                     <span>{userdata.current.dept_name}</span>
+                    <span>Department</span>
                 </div>
                 <div className="info-item" style={{textAlign:"center"}}>
-                    <span>Hostel:</span>
+                    <span>Hostel</span>
                     <span>{userdata.current.hostel}</span>
                 </div>
                 <div className="info-item" style={{textAlign:"center"}}>
-                    <span>Room No:</span>
+                    <span>Room </span>
                     <span>{userdata.current.room}</span>
                 </div>
                 <div className="info-item" style={{textAlign:"center"}}>
-                    <span>Engagement level:</span>
+                    <span>Engagement Level:</span>
                     <span>{userdata.current.eng_level}</span>
                 </div>
                 <div className="info-item" style={{textAlign:"center"}}>
-                    <span>Extra curricular Engagement level:</span>
+                    <span>Extra-Curricular Engagement level:</span>
                     <span>{userdata.current.ec_eng_level}</span>
                 </div>
-                <div style={{display: "flex", justifyContent: "center"}}>
-                <button className="button2" onClick={e => sendemail(e)} style={{alignItems:"center",display:"flex",justifyContent:"center"}}>Send Email</button>
-                </div>
+                {/* <div style={{display: "flex", justifyContent: "center"}}> */}
+                {/* <button className="button2" onClick={e => sendemail(e)} style={{alignItems:"center",display:"flex",justifyContent:"center"}}>Send Email</button> */}
+                {/* </div> */}
            </div>
           
         </div>
