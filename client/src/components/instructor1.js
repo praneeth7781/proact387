@@ -15,6 +15,8 @@ import { datetime, RRule, RRuleSet, rrulestr } from 'rrule'
 import {A,B,C,D,E,F,G,H,I,J,K,L,getObjectById,generateEvents} from './timeslots'
 const localizer = momentLocalizer(moment);
 const timezone = moment.tz.guess();
+// const moment = getMoment(timezone);
+//   const localizer = momentLocalizer(moment);
 
 
 
@@ -287,7 +289,7 @@ const sendemail=async(e)=>{
               <td>{stud.dept_name}</td>
               <td>{stud.eng_level}</td>
               <td>{stud.ec_eng_level}</td>
-              <td><button className="button3" onClick={() => handleButtonClick(stud)}>Button</button></td>
+              <td><button className="button3" onClick={() => handleButtonClick(stud)}>Email</button></td>
             </tr>
           ))}
         </tbody>

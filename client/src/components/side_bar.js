@@ -160,21 +160,23 @@ export default function Side_bar() {
     return (
         <div style={{ width: "19rem", position: "fixed", display: "flex", flexDirection: "column", alignItems: "center" }}>
             
-            <div style={{backdropFilter:"blur(8px)",backgroundColor:"rgba(0,0,0, 0.06)",borderRadius:"10px"}}>
+            {/* <div style={{backdropFilter:"blur(8px)",backgroundColor:"rgba(0,0,0, 0.06)",borderRadius:"10px", minWidth: "200px",
+  minHeight: "200px",display:"flex",flexDirection:"column"}}> */}
+    <div className='add_assgn'>
                 
                     
-            <h2 style={{textAlign:"center"}}>Personal Information</h2>
+            <h2 style={{textAlign:"center",paddingTop:"20px"}}>Personal Information</h2>
                         <div className="info-item" style={{textAlign:"center"}}>
                             
                             <span>ID:</span>
                             <span>{instid.current}</span>
                         </div>
-                        <div className="info-item">
+                        <div className="info-item" style={{textAlign:"center"}}>
                             
                             <span>NAME:</span>
                             <span>{instname.current}</span>
                         </div>
-                        <div className="info-item">
+                        <div className="info-item" style={{textAlign:"center"}}>
                             <span>Department:</span>
                             {/* <span></span> */}
                             <span>{instdept.current}</span>

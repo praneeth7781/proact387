@@ -106,6 +106,10 @@ export default function Stu_side() {
                     <span>Engagement level:</span>
                     <span>{userdata.current.eng_level}</span>
                 </div>
+                <div className="info-item" style={{textAlign:"center"}}>
+                    <span>Extra curricular Engagement level:</span>
+                    <span>{userdata.current.ec_eng_level}</span>
+                </div>
                 <div style={{display: "flex", justifyContent: "center"}}>
                 <button className="button2" onClick={e => sendemail(e)} style={{alignItems:"center",display:"flex",justifyContent:"center"}}>Send Email</button>
                 </div>

@@ -6,20 +6,19 @@ import Stu_side from "./stu_side";
 import Modal from 'react-modal';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-// import moment from 'moment'
+
 import { tzOffset } from "rrule/dist/esm/dateutil";
-// import { datetime, RRule, RRuleSet, rrulestr } from 'rrule'
 import InsightsForm from "./insightsform";
 import Insights from "./insights";
 import Self_question from "./self_question";
 import moment from 'moment-timezone'
 import { datetime, RRule, RRuleSet, rrulestr } from 'rrule'
 import {A,B,C,D,E,F,G,H,I,J,K,L,getObjectById,generateEvents} from './timeslots'
-const localizer = momentLocalizer(moment);
-const timezone = moment.tz.guess();
 // const localizer = momentLocalizer(moment);
-// const timezone = moment.tz.guess(); 
-const recurrenceRule = rrulestr('FREQ=WEEKLY;BYDAY=TU,TH;COUNT=10');
+// const timezone = moment.tz.guess();
+const localizer = momentLocalizer(moment);
+const timezone = moment.tz.guess(); 
+// const recurrenceRule = rrulestr('FREQ=WEEKLY;BYDAY=TU,TH;COUNT=10');
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -132,6 +131,8 @@ function Dashboard() {
   };
   const handleSubmit=async()=>{
     setActiveBlock(null);
+    window.location.reload(false);
+
 }
 const handleCheckboxChange = async(event,val) => {
   // const deadlineId = event.target.id;
@@ -220,6 +221,8 @@ const fetchdata=async()=>{
                             // defaultDate={moment().toDate()}
                             style={{ height: "100%" ,width:"100%"}}
                             localizer={localizer}
+                            timezone={timezone}
+                            timeFormat="HH:mm:ss"
                             />  
                         </div>
                         <div style={{height:"50px"}}></div>
@@ -335,7 +338,7 @@ const fetchdata=async()=>{
       </div>
       <div id="block2" style={{display: activeBlock === 'block2' ? 'block' : 'none'}}>
         {/* <h2 style={{textAlign:"center"}}>Block 2</h2> */}
-        <Insights ok={null}/>
+        <Insights ok={null} />
         {/* {console.log(isVisible)} */}
         {/* {isVisible && } */}
       </div>  
